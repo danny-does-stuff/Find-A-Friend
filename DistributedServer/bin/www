@@ -12,7 +12,7 @@ var constants = require('../services/constants');
  * Get port from environment and store in Express.
  */
 
-if (!nodeID || !constants.nodeIDs.includes(constants.nodeID)) {
+if (!constants.nodeID || !constants.nodeIDs.includes(constants.nodeID)) {
   console.log("You must provide a node id between 1 and 4 inclusive");
   process.exit(-1);
 }
