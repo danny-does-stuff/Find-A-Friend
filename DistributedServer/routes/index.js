@@ -15,7 +15,8 @@ router.post("/message", function (request, response) {
 	var message = request.body.Body.split(' ');
 
 	if (message.length != 2) {
-		response.send(`<Response><Message>Invalid message. Try 'signup <name>', 'accept <hangout ID>', or 'hangout <zip code>'</Message></Response>`);
+		response.end(`<Response><Message>Invalid message. Try 'signup <name>', 'accept <hangout ID>', or 'hangout <zip code>'</Message></Response>`);
+		return;
 	}
 
 	// console.log(request.body);
