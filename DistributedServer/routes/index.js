@@ -15,7 +15,9 @@ router.post("/message", function (request, response) {
 	var message = request.body.Body.split(' ');
 
 	if (message.length != 2) {
-		response.send(`<Response><Message>Invalid message. Try 'signup <name>', 'accept <hangout ID>', or 'hangout <zip code>'</Message></Response>`);
+		request.pause();
+		response.status = 400;
+		response.end(`<Response><Message>Invalid message. Try 'signup <name>', 'accept <hangout ID>', or 'hangout <zip code>'</Message></Response>`);
 	}
 
 	// console.log(request.body);
@@ -43,7 +45,7 @@ router.post("/message", function (request, response) {
 		if (!hangout) {
 			returnMessage = 'There is no hangout with this id';
 		} else {
-			returnMessage = 'You joined the hangout whoooo';
+			returnMessage = 'You joined the hangout woooo';
 		}
 	} else {
 		returnMessage = "Invalid message. Try 'signup <name>', 'accept <hangout ID>', or 'hangout <zip code>'";
