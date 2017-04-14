@@ -7,6 +7,7 @@ var hangouts = require('../services/hangoutManager');
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.send('Hello There');
+  res.io.emit('hangout', 'hangoutID', 'fromZip');
 });
 
 router.post("/message", function (request, response) {
@@ -46,6 +47,7 @@ router.post("/message", function (request, response) {
 			returnMessage = 'There is no hangout with this id';
 		} else {
 			returnMessage = 'You joined the hangout woooo';
+//              res.io.emit('hangout', hangoutID, 'fromZip');
 		}
 	} else {
 		returnMessage = "Invalid message. Try 'signup <name>', 'accept <hangout ID>', or 'hangout <zip code>'";
