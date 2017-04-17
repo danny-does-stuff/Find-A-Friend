@@ -9,6 +9,7 @@ var invalidMessageMessage = "Invalid message. Try 'signup <name>', 'hangout <zip
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.send('Hello There');
+  res.io.emit('hangout', 'hangoutID', 'fromZip');
 });
 
 router.post("/message", function (request, response) {
@@ -33,6 +34,7 @@ router.post("/message", function (request, response) {
 		returnMessage = hangouts.createHangout(fromNumber, message[1]);
 	} else if (action == 'accept') {
 		returnMessage = hangouts.joinHangout(fromNumber, message[1]);
+//              res.io.emit('hangout', hangoutID, 'fromZip');
 	} else if (action == 'end') {
 		returnMessage = hangouts.endHangout(fromNumber, message[1]);
 	} else {

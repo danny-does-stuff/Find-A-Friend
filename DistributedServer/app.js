@@ -12,6 +12,8 @@ require('./services/twilio');
 var users = require('./routes/users');
 
 var app = express();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
 
 app.io = io;
 var routes = require('./routes/index')(io);
@@ -19,6 +21,11 @@ var routes = require('./routes/index')(io);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+
+app.use(function(req, res, next){
+  res.io = io;
+  next();
+});
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -49,4 +56,4 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+module.exports = {app: app, server: server};

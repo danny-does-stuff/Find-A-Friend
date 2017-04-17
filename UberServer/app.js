@@ -4,11 +4,33 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+var io = require('socket.io-client');
+var socket1 = io.connect('http://localhost:5001', {reconnect: true});
+var socket2 = io.connect('http://localhost:5002', {reconnect: true});
+var socket3 = io.connect('http://localhost:5003', {reconnect: true});
+var socket4 = io.connect('http://localhost:5004', {reconnect: true});
 var index = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+
+// Add a connect listener
+socket1.on('hangout', function (hangoudID, fromZip) {
+    console.log('From Socket 1:', hangoudID, fromZip);
+});
+
+socket2.on('hangout', function (hangoudID, fromZip) {
+    console.log('From Socket 2:', hangoudID, fromZip);
+});
+
+socket3.on('hangout', function (hangoudID, fromZip) {
+    console.log('From Socket 3:', hangoudID, fromZip);
+});
+
+socket4.on('hangout', function (hangoudID, fromZip) {
+    console.log('From Socket 4:', hangoudID, fromZip);
+});
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
