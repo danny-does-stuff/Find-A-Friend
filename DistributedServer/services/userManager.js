@@ -1,6 +1,15 @@
 var users = {}
 
-function addUser(name, number) {
+function signup(number, name) {
+	if (getUser(number)) {
+		return 'User with your number already exists';
+	} else {
+		addUser(number, name);
+		return `'${number}'successfully signed up as '${name}'`;
+	}
+}
+
+function addUser(number, name) {
 	users[number] = {
 		name: name,
 		number: number
@@ -12,6 +21,6 @@ function getUser(number) {
 }
 
 module.exports = {
-	addUser: addUser,
+	signup: signup,
 	getUser: getUser
 }

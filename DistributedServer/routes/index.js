@@ -3,6 +3,8 @@ var router = express.Router();
 var users = require('../services/userManager');
 var hangouts = require('../services/hangoutManager');
 
+var invalidMessageMessage = "Invalid message. Try 'signup <name>', 'hangout <zip code>', 'accept <hangout ID>', or 'end <hangout ID>'"
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -17,38 +19,24 @@ router.post("/message", function (request, response) {
 	if (message.length != 2) {
 		request.pause();
 		response.status = 400;
-		response.end(`<Response><Message>Invalid message. Try 'signup <name>', 'accept <hangout ID>', or 'hangout <zip code>'</Message></Response>`);
+		return response.end(`<Response><Message>${invalidMessageMessage}</Message></Response>`);
 	}
 
 	// console.log(request.body);
 
-	var returnMessage = 'not set';
+	var returnMessage = 'no message';
 	var action = message[0].toLowerCase();
 
 	if (action == 'signup') {
-		if (users.getUser(fromNumber)) {
-			returnMessage = 'User with your number already exists';
-		} else {
-			users.addUser(message[1], fromNumber);
-			returnMessage = `Successfully signed up as ${message[1]}`;
-		}
+		returnMessage = users.signup(fromNumber, message[1]);
 	} else if (action == 'hangout') {
-		if (message[1].length == 5 && /^\d+$/.test(message[1])) {
-			var hangoutID = hangouts.addHangout(message[1]);
-			returnMessage = `Hangout created. Hangout ID: ${hangoutID}`;
-		} else {
-			returnMessage = 'Please provide a valid zip code';
-		}
+		returnMessage = hangouts.createHangout(fromNumber, message[1]);
 	} else if (action == 'accept') {
-		var hangoutID = message[1];
-		var hangout = hangouts.getHangout(hangoutID);
-		if (!hangout) {
-			returnMessage = 'There is no hangout with this id';
-		} else {
-			returnMessage = 'You joined the hangout woooo';
-		}
+		returnMessage = hangouts.joinHangout(fromNumber, message[1]);
+	} else if (action == 'end') {
+		returnMessage = hangouts.endHangout(fromNumber, message[1]);
 	} else {
-		returnMessage = "Invalid message. Try 'signup <name>', 'accept <hangout ID>', or 'hangout <zip code>'";
+		returnMessage = invalidMessageMessage;
 	}
 
 	response.send(`<Response><Message>${returnMessage}</Message></Response>`);
