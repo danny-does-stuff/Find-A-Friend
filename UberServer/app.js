@@ -15,22 +15,33 @@ var users = require('./routes/users');
 var app = express();
 
 // Add a connect listener
-socket1.on('hangout', function (hangoudID, fromZip) {
-    console.log('From Socket 1:', hangoudID, fromZip);
+socket1.on('hangout', function (fromNumber, longitude, latitude) {
+    console.log('From Socket 1:', fromNumber, longitude, latitude);
+    
+    //Send the time estimate back to the Distributed Server
+    socket1.emit('estimate', fromNumber, "TimeEstimate");
 });
 
-socket2.on('hangout', function (hangoudID, fromZip) {
-    console.log('From Socket 2:', hangoudID, fromZip);
+socket2.on('hangout', function (fromNumber, longitude, latitude) {
+    console.log('From Socket 2:', fromNumber, longitude, latitude);
+    
+    //Send the time estimate back to the Distributed Server
+    socket2.emit('estimate', fromNumber, "TimeEstimate");
 });
 
-socket3.on('hangout', function (hangoudID, fromZip) {
-    console.log('From Socket 3:', hangoudID, fromZip);
+socket3.on('hangout', function (fromNumber, longitude, latitude) {
+    console.log('From Socket 3:', fromNumber, longitude, latitude);
+    
+    //Send the time estimate back to the Distributed Server
+    socket3.emit('estimate', fromNumber, "TimeEstimate");
 });
 
-socket4.on('hangout', function (hangoudID, fromZip) {
-    console.log('From Socket 4:', hangoudID, fromZip);
+socket4.on('hangout', function (fromNumber, longitude, latitude) {
+    console.log('From Socket 4:', fromNumber, longitude, latitude);
+    
+    //Send the time estimate back to the Distributed Server
+    socket4.emit('estimate', fromNumber, "TimeEstimate");
 });
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

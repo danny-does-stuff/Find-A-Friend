@@ -45,6 +45,21 @@ app.use(function(req, res, next) {
   next(err);
 });
 
+io.on('connection', function (socket) {
+    // socket variable name   ^^^^^^
+    console.log('Client connected.');
+//when server receive message from client
+    socket.on('estimate', function (FromNumber, TimeEstimate) {
+        console.log("The time estimate we received back is: " + TimeEstimate);
+        console.log("The From Number is: " + FromNumber);
+    });
+
+    // Disconnect listener
+    socket.on('disconnect', function () {
+        console.log('Client disconnected.');
+    });
+});
+
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development

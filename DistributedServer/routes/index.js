@@ -9,14 +9,17 @@ var invalidMessageMessage = "Invalid message. Try 'signup <name>', 'create hango
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.send('Hello There');
-  res.io.emit('hangout', 'hangoutID', 'fromZip');
+  res.io.emit('hangout', 'fromNumber', 'fromZip', 'something', 'something Else');
 });
 
 router.post("/message", function (request, response) {
+    console.log("FROM: " + request.body.From)
+    console.log("TO: " + request.body.To)
+    console.log("message: " + request.body.Body)
 	var fromNumber = request.body.From;
 	var toNumber = request.body.To;
 	var message = request.body.Body.split(' ');
-
+    
 	if (message.length != 2) {
 		request.pause();
 		response.status = 400;
@@ -32,7 +35,7 @@ router.post("/message", function (request, response) {
 		returnMessage = hangouts.createHangout(fromNumber);
 	} else if (action == 'accept') {
 		returnMessage = hangouts.joinHangout(fromNumber, message[1]);
-//              res.io.emit('hangout', hangoutID, 'fromZip');
+        response.io.emit('hangout', fromNumber, users.getUser(fromNumber).longitude, users.getUser(fromNumber).latitude);
 	} else if (action == 'end') {
 		returnMessage = hangouts.endHangout(fromNumber, message[1]);
 	} else {
@@ -43,9 +46,9 @@ router.post("/message", function (request, response) {
 });
 
 module.exports = function(io) {
-	io.on('connection', function(socket) {
+	io.on('estimate', function(socket) {
 
-		console.log('got a connection');
+		console.log('got an estimate');
 
 		socket.on("some event", function(dataFromEvent) {
 			socket.emit("some other event");
