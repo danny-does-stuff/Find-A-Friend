@@ -15,32 +15,36 @@ var users = require('./routes/users');
 var app = express();
 
 // Add a connect listener
-socket1.on('hangout', function (fromNumber, longitude, latitude) {
-    console.log('From Socket 1:', fromNumber, longitude, latitude);
+socket1.on('hangout', function (data) {
+    	console.log('From Socket 1:')
+	console.log(data);
     
-    //Send the time estimate back to the Distributed Server
-    socket1.emit('estimate', fromNumber, "TimeEstimate");
+    	//Send the time estimate back to the Distributed Server
+    	getLocation(latitude, longitude, fromNumber, socket1)
 });
 
-socket2.on('hangout', function (fromNumber, longitude, latitude) {
-    console.log('From Socket 2:', fromNumber, longitude, latitude);
+socket2.on('hangout', function (data) {
+   	console.log('From Socket 2:')
+	console.log(data);
     
-    //Send the time estimate back to the Distributed Server
-    socket2.emit('estimate', fromNumber, "TimeEstimate");
+    	//Send the time estimate back to the Distributed Server
+    	getLocation(latitude, longitude, fromNumber, socket2)
 });
 
-socket3.on('hangout', function (fromNumber, longitude, latitude) {
-    console.log('From Socket 3:', fromNumber, longitude, latitude);
+socket3.on('hangout', function (data) {
+	console.log('From Socket 3:')
+	console.log(data);
     
-    //Send the time estimate back to the Distributed Server
-    socket3.emit('estimate', fromNumber, "TimeEstimate");
+    	//Send the time estimate back to the Distributed Server
+    	getLocation(latitude, longitude, fromNumber, socket3)
 });
 
-socket4.on('hangout', function (fromNumber, longitude, latitude) {
-    console.log('From Socket 4:', fromNumber, longitude, latitude);
+socket4.on('hangout', function (data) {
+    	console.log('From Socket 4:')
+	console.log(data);
     
-    //Send the time estimate back to the Distributed Server
-    socket4.emit('estimate', fromNumber, "TimeEstimate");
+    	//Send the time estimate back to the Distributed Server
+    	getLocation(latitude, longitude, fromNumber, socket4)
 });
 
 // view engine setup
@@ -75,5 +79,21 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+function getLocation(lat, long, fromNumber, socket) {
+	var myUrl = 'https://api.uber.com/v1.2/estimates/time?start_latitude=' + lat + '&start_longitude=' + long
+	var options = {
+  		url: myUrl,
+ 		 headers: {
+    		'Authorization': 'Token LVguhENln4RThXEEbYclf-q4qVXtftrkbfm1Iqnb'
+  		}
+	};
+	request(options, function (error, response, body) {
+    		if (!error && response.statusCode == 200) {
+			//TODO: Parse response body and just send info back that is needed.
+      			socket.emit('estimate', body);
+    		}
+	});
+}
 
 module.exports = app;
