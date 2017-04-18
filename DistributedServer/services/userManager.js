@@ -9,11 +9,29 @@ function signup(number, name) {
 	}
 }
 
+function getLong() {
+	var min = -113.060059;
+	var max = -109.044800;
+
+	return Math.random() * (max - min) + min;
+}
+
+function getLat() {
+	var min = 37;
+	var max = 42.053117;
+
+	return Math.random() * (max - min) + min;
+}
+
 function addUser(number, name) {
 	users[number] = {
 		name: name,
-		number: number
+		number: number,
+		longitude: getLong(),
+		latitude: getLat()
 	};
+
+	console.log('adding user:', users[number]);
 }
 
 function getUser(number) {

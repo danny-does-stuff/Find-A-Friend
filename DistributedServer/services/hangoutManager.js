@@ -3,34 +3,34 @@ var users = require('./userManager');
 var hangouts = {};
 var currID = 0;
 
-function addHangout(phoneNumber, zipCode) {
-
-	var hangout = {
-		id: getNextID(),
-		creatorNumber: phoneNumber,
-		zipCode: zipCode,
-		participants: {},
-		closed: false
-	};
-
-	hangout.participants[phoneNumber] = users.getUser(phoneNumber);
-
-	hangouts[id] = hangout;
-
-	return id;
+function addHangout(hangout) {
+	hangouts[hangout.id] = hangout;
 }
 
 function getHangout(id) {
 	return hangouts[id];
 }
 
-function createHangout(phoneNumber, zipCode) {
-	if (zipCode.length == 5 && /^\d+$/.test(zipCode)) {
-		var hangoutID = hangouts.addHangout(phoneNumber, zipCode);
-		return `Hangout created. Hangout ID: ${hangoutID}`;
-	} else {
-		return 'Please provide a valid zip code';
+function createHangout(phoneNumber) {
+	var user = users.getUser(phoneNumber)
+	if (!user) {
+		return `No user with number ${phoneNumber}`;
 	}
+
+	var hangout = {
+		id: getNextID(),
+		creatorNumber: user.number,
+		latitude: user.latitude,
+		longitude: user.longitude,
+		participants: {},
+		closed: false
+	};
+
+	hangout.participants[user.number] = user;
+
+	addHangout(hangout);
+
+	return `Hangout created. Hangout ID: ${hangout.id}`;
 }
 
 function endHangout(phoneNumber, id) {
@@ -48,8 +48,14 @@ function joinHangout(phoneNumber, id) {
 	if (!getHangout(id)) {
 		return "Invalid Hangout ID";
 	}
+
+	var user = users.getUser(phoneNumber);
+
+	if (!user) {
+		return `No user with number ${phoneNumber}`;
+	}
 	
-	hangouts[id].participants[phoneNumber] = users.getUser(phoneNumber);
+	hangouts[id].participants[phoneNumber] = user;
 	return "You joined the Hangout! Wooooo!!";
 }
 
@@ -60,5 +66,6 @@ function getNextID() {
 module.exports = {
 	createHangout: createHangout,
 	addHangout: addHangout,
-	endHangout: endHangout
+	endHangout: endHangout,
+	joinHangout: joinHangout
 }
