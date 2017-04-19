@@ -46,7 +46,9 @@ router.post("/message", function (request, response) {
 	} else if (action == 'accept') {
 		returnMessage = hangouts.joinHangout(fromNumber, message[1]);
 		if (!returnMessage.startsWith('error')) {
-        	response.io.emit('hangout', fromNumber, users.getUser(fromNumber).longitude, users.getUser(fromNumber).latitude);
+			var fromUser = users.getUser(fromNumber);
+        	response.io.emit('hangout', fromNumber, fromUser.longitude, fromUser.latitude);
+        	twilio.sendMessage(hangouts.getHangout(message[1]).creatorNumber, `${fromUser.name} accepted your Hangout invitation`);
 		}
 	} else if (action == 'end') {
 		returnMessage = hangouts.endHangout(fromNumber, message[1]);
