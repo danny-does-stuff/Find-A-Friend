@@ -27,14 +27,20 @@ function sendMessage(number, body) {
 }
 
 function notifyUsers(message, notNumbers) {
+	// console.log('message', message);
+	// console.log('notNumber', notNumbers);
 	var users = userManager.getUsers();
+	// console.log('users', users);
 	for (var userNumber in users) {
+		// console.log('userNumber', userNumber);
 		if (!notNumbers.includes(userNumber)) {
+			// console.log('sending message');
 			sendMessage(userNumber, message);
 		}
 	}
 }
 
 module.exports = {
-	sendMessage: sendMessage
+	sendMessage: sendMessage,
+	notifyUsers: notifyUsers
 }

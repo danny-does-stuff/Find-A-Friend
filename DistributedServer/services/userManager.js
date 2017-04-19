@@ -5,7 +5,7 @@ function signup(number, name) {
 		return 'error: User with your number already exists';
 	} else {
 		addUser(number, name);
-		return `'${number}'successfully signed up as '${name}'`;
+		return `'${number}' successfully signed up as '${name}'`;
 	}
 }
 
