@@ -11,40 +11,43 @@ var socket3 = io.connect('http://localhost:5003', {reconnect: true});
 var socket4 = io.connect('http://localhost:5004', {reconnect: true});
 var index = require('./routes/index');
 var users = require('./routes/users');
+var request = require('request');
 
 var app = express();
 
+//socket1.on('hangout', function (fromNumber, longitude, latitude) {
+//    console.log('From Socket 1:', fromNumber, longitude, latitude);
+//    
+//    //Send the time estimate back to the Distributed Server
+//    socket1.emit('estimate', fromNumber, "TimeEstimate");
+//});
+
 // Add a connect listener
-socket1.on('hangout', function (data) {
-    	console.log('From Socket 1:')
-	console.log(data);
-    
-    	//Send the time estimate back to the Distributed Server
-    	getLocation(latitude, longitude, fromNumber, socket1)
+socket1.on('hangout', function (fromNumber, longitude, latitude) {
+    console.log('From Socket 1:', fromNumber, longitude, latitude);
+    //Send the time estimate back to the Distributed Server
+    getLocation(latitude, longitude, fromNumber, socket1)
 });
 
-socket2.on('hangout', function (data) {
-   	console.log('From Socket 2:')
-	console.log(data);
+socket2.on('hangout', function (fromNumber, longitude, latitude) {
+    console.log('From Socket 2:', fromNumber, longitude, latitude);
     
-    	//Send the time estimate back to the Distributed Server
-    	getLocation(latitude, longitude, fromNumber, socket2)
+    //Send the time estimate back to the Distributed Server
+    getLocation(latitude, longitude, fromNumber, socket2)
 });
 
-socket3.on('hangout', function (data) {
-	console.log('From Socket 3:')
-	console.log(data);
+socket3.on('hangout', function (fromNumber, longitude, latitude) {
+    console.log('From Socket 3:', fromNumber, longitude, latitude);
     
-    	//Send the time estimate back to the Distributed Server
-    	getLocation(latitude, longitude, fromNumber, socket3)
+    //Send the time estimate back to the Distributed Server
+    getLocation(latitude, longitude, fromNumber, socket3)
 });
 
-socket4.on('hangout', function (data) {
-    	console.log('From Socket 4:')
-	console.log(data);
+socket4.on('hangout', function (fromNumber, longitude, latitude) {
+    console.log('From Socket 1:', fromNumber, longitude, latitude);
     
-    	//Send the time estimate back to the Distributed Server
-    	getLocation(latitude, longitude, fromNumber, socket4)
+    //Send the time estimate back to the Distributed Server
+    getLocation(latitude, longitude, fromNumber, socket4)
 });
 
 // view engine setup
@@ -81,7 +84,13 @@ app.use(function(err, req, res, next) {
 });
 
 function getLocation(lat, long, fromNumber, socket) {
-	var myUrl = 'https://api.uber.com/v1.2/estimates/time?start_latitude=' + lat + '&start_longitude=' + long
+    console.log("LAT:")
+    console.log(lat)
+    console.log("LONG:")
+    console.log(long)
+    console.log("From Number:")
+    console.log(fromNumber)
+	var myUrl = 'https://api.uber.com/v1.2/estimates/time?start_latitude=' + 40.233844 + '&start_longitude=' + -111.658534
 	var options = {
   		url: myUrl,
  		 headers: {
@@ -90,9 +99,19 @@ function getLocation(lat, long, fromNumber, socket) {
 	};
 	request(options, function (error, response, body) {
     		if (!error && response.statusCode == 200) {
+            console.log("THIS IS THE BODY: ")
+            console.log(body)
+            var json = JSON.parse(body);
+            var estimate = 'No Time Estimate Availabe'
+            if(json['times'][0] == undefined){
+            }
+            else {
+                estimate = json['times'][0]['estimate']
+                console.log(estimate)
+            }
 			//TODO: Parse response body and just send info back that is needed.
-      			socket.emit('estimate', body);
-    		}
+      			socket.emit('estimate', fromNumber, estimate);
+        }
 	});
 }
 
