@@ -83,6 +83,7 @@ module.exports = {
 	addHangout: addHangout,
 	endHangout: endHangout,
 	joinHangout: joinHangout,
+	getHangout: getHangout,
 	getHangouts: getHangouts,
 	setHangouts: setHangouts,
 	updateHangouts: updateHangouts
