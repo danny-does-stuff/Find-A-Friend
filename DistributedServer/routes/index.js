@@ -40,7 +40,8 @@ router.post("/message", function (request, response) {
 		if (!returnMessage.startsWith('error')) {
 			console.log('updated hangouts:', hangouts.getHangouts());
 			response.io.emit('new hangout', hangouts.getHangouts());
-			twilio.notifyUsers(responseMessage, [fromNumber]);
+			console.log('bout to notify');
+			twilio.notifyUsers(returnMessage, [fromNumber]);
 		}
 	} else if (action == 'accept') {
 		returnMessage = hangouts.joinHangout(fromNumber, message[1]);
