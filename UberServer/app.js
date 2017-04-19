@@ -90,7 +90,7 @@ function getLocation(lat, long, fromNumber, socket) {
     console.log(long)
     console.log("From Number:")
     console.log(fromNumber)
-	var myUrl = 'https://api.uber.com/v1.2/estimates/time?start_latitude=' + 40.233844 + '&start_longitude=' + -111.658534
+	var myUrl = 'https://api.uber.com/v1.2/estimates/time?start_latitude=' + lat + '&start_longitude=' + long
 	var options = {
   		url: myUrl,
  		 headers: {
