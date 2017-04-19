@@ -5,13 +5,11 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var io = require('socket.io')();
-//var ioClient = require('socket.io-client');
-//var socket1 = ioClient.connect('http://localhost:5001', {reconnect: true});
-//var socket2 = ioClient.connect('http://localhost:5002', {reconnect: true});
-//var socket3 = ioClient.connect('http://localhost:5003', {reconnect: true});
-//var socket4 = ioClient.connect('http://localhost:5004', {reconnect: true});
+
 var constants = require('./services/constants');
-require('./services/twilio');
+var userManager = require('./services/userManager');
+var hangoutManager = require('./services/hangoutManager');
+var twilio = require('./services/twilio');
 
 // var index = require('./routes/index');
 var users = require('./routes/users');
@@ -33,30 +31,36 @@ app.use(function(req, res, next){
 });
 
 
-//if(port == 1){
-//    //listen on ports 2, 3, 4
-//    var socket1 = ioClient.connect('http://localhost:5002', {reconnect: true});
-//    var socket2 = ioClient.connect('http://localhost:5003', {reconnect: true});
-//    var socket3 = ioClient.connect('http://localhost:5004', {reconnect: true});
-//}
-//else if (port == 2){
-//    //listen on ports 1, 3, 4
-//    var socket1 = ioClient.connect('http://localhost:5001', {reconnect: true});
-//    var socket2 = ioClient.connect('http://localhost:5003', {reconnect: true});
-//    var socket3 = ioClient.connect('http://localhost:5004', {reconnect: true});
-//}
-//else if (port == 3){
-//    //listen on ports 1, 2, 4
-//    var socket1 = ioClient.connect('http://localhost:5001', {reconnect: true});
-//    var socket2 = ioClient.connect('http://localhost:5002', {reconnect: true});
-//    var socket3 = ioClient.connect('http://localhost:5004', {reconnect: true});
-//}
-//else if (port == 4){
-//    //listen on ports 1, 2, 3
-//    var socket1 = ioClient.connect('http://localhost:5001', {reconnect: true});
-//    var socket2 = ioClient.connect('http://localhost:5002', {reconnect: true});
-//    var socket3 = ioClient.connect('http://localhost:5003', {reconnect: true});
-//}
+var ioClient = require('socket.io-client');
+
+var sockets = [];
+
+constants.nodeIDs.forEach(function(id) {
+	if (id != port) {
+		console.log(id);
+		var socket = ioClient.connect(constants.urlBase + ':' + constants.portBase + id);
+
+		socket.on('connect', function() {
+			console.log('I\'m a client connecting to socket');
+			socket.emit('update stuff', userManager.getUsers(), hangoutManager.getHangouts());
+		});
+
+		socket.on('update stuff', function(users, hangouts) {
+			userManager.updateUsers(users);
+			hangoutManager.updateHangouts(hangouts);
+		});
+
+		socket.on('new user', function(users) {
+			userManager.setUsers(users);
+		});
+
+		socket.on('new hangout', function(hangouts) {
+			hangoutManager.setHangouts(hangouts);
+		});
+
+		sockets.push(socket);
+	}
+});
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -79,17 +83,28 @@ app.use(function(req, res, next) {
 io.on('connection', function (socket) {
     // socket variable name   ^^^^^^
     console.log('Client connected.');
+    socket.emit('update stuff', userManager.getUsers(), hangoutManager.getHangouts());
     
     //when server receive message from client
-    socket.on('estimate', function (FromNumber, TimeEstimate) {
-        console.log("The time estimate we received back is: " + TimeEstimate);
-        console.log("The From Number is: " + FromNumber);
+    socket.on('estimate', function (fromNumber, timeEstimate) {
+        console.log("The time estimate we received back is: " + timeEstimate);
+        console.log("The From Number is: " + fromNumber);
+        twilio.sendMessage(fromNumber, 'It will take an uber ' + timeEstimate + ' seconds to get to your location. You can figure it out.');
     });
+
+    socket.on('update stuff', function(users, hangouts) {
+		userManager.updateUsers(users);
+		hangoutManager.updateHangouts(hangouts);
+	});
 
     // Disconnect listener
     socket.on('disconnect', function () {
         console.log('Client disconnected.');
     });
+});
+
+sockets[1].on('event name', function() {
+	console.log('weird')
 });
 
 // error handler

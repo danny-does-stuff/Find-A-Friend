@@ -2,7 +2,7 @@ var users = {}
 
 function signup(number, name) {
 	if (getUser(number)) {
-		return 'User with your number already exists';
+		return 'error: User with your number already exists';
 	} else {
 		addUser(number, name);
 		return `'${number}'successfully signed up as '${name}'`;
@@ -10,15 +10,15 @@ function signup(number, name) {
 }
 
 function getLong() {
-	var min = -113.060059;
-	var max = -109.044800;
+	var min = -111.705551;
+	var max = -111.630020;
 
 	return Math.random() * (max - min) + min;
 }
 
 function getLat() {
-	var min = 37;
-	var max = 42.053117;
+	var min = 40.225972;
+	var max = 40.312843;
 
 	return Math.random() * (max - min) + min;
 }
@@ -38,7 +38,24 @@ function getUser(number) {
 	return users[number];
 }
 
+function getUsers() {
+	return users;
+}
+
+function setUsers(toSet) {
+	users = toSet;
+}
+
+function updateUsers(toSet) {
+	if (Object.keys(toSet).length > Object.keys(users).length) {
+		setUsers(toSet);
+	}
+}
+
 module.exports = {
 	signup: signup,
-	getUser: getUser
+	getUser: getUser,
+	getUsers: getUsers,
+	setUsers: setUsers,
+	updateUsers: updateUsers
 }

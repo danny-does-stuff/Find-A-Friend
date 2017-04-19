@@ -5,10 +5,13 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var io = require('socket.io-client');
-var socket1 = io.connect('http://localhost:5001', {reconnect: true});
-var socket2 = io.connect('http://localhost:5002', {reconnect: true});
-var socket3 = io.connect('http://localhost:5003', {reconnect: true});
-var socket4 = io.connect('http://localhost:5004', {reconnect: true});
+
+var urlBase = '462.danny-harding.com'
+
+var socket1 = io.connect('http://' + urlBase + ':5001', {reconnect: true});
+var socket2 = io.connect('http://' + urlBase + ':5002', {reconnect: true});
+var socket3 = io.connect('http://' + urlBase + ':5003', {reconnect: true});
+var socket4 = io.connect('http://' + urlBase + ':5004', {reconnect: true});
 var index = require('./routes/index');
 var users = require('./routes/users');
 var request = require('request');

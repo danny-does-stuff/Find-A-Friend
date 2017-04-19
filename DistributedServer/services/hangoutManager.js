@@ -14,7 +14,7 @@ function getHangout(id) {
 function createHangout(phoneNumber) {
 	var user = users.getUser(phoneNumber)
 	if (!user) {
-		return `No user with number ${phoneNumber}`;
+		return `error: No user with number ${phoneNumber}`;
 	}
 
 	var hangout = {
@@ -30,14 +30,14 @@ function createHangout(phoneNumber) {
 
 	addHangout(hangout);
 
-	return `Hangout created. Hangout ID: ${hangout.id}`;
+	return `New Hangout created. Hangout ID: ${hangout.id}`;
 }
 
 function endHangout(phoneNumber, id) {
 	if (hangouts[id].closed) {
-		return `Hangout ${id} is already closed.`;
+		return `error: Hangout ${id} is already closed.`;
 	} else if (hangouts[id].creatorNumber != phoneNumber) {
-		return 'Must be Hangout creator in order to end a Hangout';
+		return 'error: Must be Hangout creator in order to end a Hangout';
 	}
 
 	hangouts[id].closed = true;
@@ -46,13 +46,13 @@ function endHangout(phoneNumber, id) {
 
 function joinHangout(phoneNumber, id) {
 	if (!getHangout(id)) {
-		return "Invalid Hangout ID";
+		return "error: Invalid Hangout ID";
 	}
 
 	var user = users.getUser(phoneNumber);
 
 	if (!user) {
-		return `No user with number ${phoneNumber}`;
+		return `error: No user with number ${phoneNumber}`;
 	}
 	
 	hangouts[id].participants[phoneNumber] = user;
@@ -63,9 +63,27 @@ function getNextID() {
 	return currID++;
 }
 
+function getHangouts() {
+	return hangouts;
+}
+
+function setHangouts(toSet) {
+	hangouts = toSet;
+	currID = Object.keys(hangouts).length;
+}
+
+function updateHangouts(toSet) {
+	if (Object.keys(toSet).length > Object.keys(hangouts).length) {
+		setHangouts(toSet);
+	}
+}
+
 module.exports = {
 	createHangout: createHangout,
 	addHangout: addHangout,
 	endHangout: endHangout,
-	joinHangout: joinHangout
+	joinHangout: joinHangout,
+	getHangouts: getHangouts,
+	setHangouts: setHangouts,
+	updateHangouts: updateHangouts
 }
