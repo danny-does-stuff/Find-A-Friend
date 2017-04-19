@@ -47,6 +47,7 @@ router.post("/message", function (request, response) {
 		returnMessage = hangouts.joinHangout(fromNumber, message[1]);
 		if (!returnMessage.startsWith('error')) {
 			var fromUser = users.getUser(fromNumber);
+			console.log('fromUser', fromUser);
         	response.io.emit('hangout', fromNumber, fromUser.longitude, fromUser.latitude);
         	twilio.sendMessage(hangouts.getHangout(message[1]).creatorNumber, `${fromUser.name} accepted your Hangout invitation`);
 		}

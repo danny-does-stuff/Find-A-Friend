@@ -11,6 +11,7 @@ var client = new twilio.RestClient(accountSid, authToken);
 
 
 function sendMessage(number, body) {
+	console.log('sending message');
 	client.messages.create({
 		body: body,
 		to: number,
